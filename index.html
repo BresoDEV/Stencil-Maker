@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    img {
+        width: 70%;
+    }
+
+    html {
+        background-color: #333;
+        align-items: center;
+    }
+
+    button,
+    input {
+        width: 75%;
+        background-color: lightgreen;
+        color: rgb(0, 0, 0);
+        border-radius: 5px;
+    }
+
+    h2 {
+        color: aliceblue;
+    }
+</style>
+
+<body>
+    <center>
+        <h2>Stencil Maker</h2>
+        <img id="imagem" src="markdown.jpg" name="Abrir2" id="Abrir2" onchange="clicar()">
+
+        <br>
+        <br>
+        <br>
+        <button id="inverter">Inverter Cores</button><br><br>
+        <input type="range" name="brightness" id="brightness" min="-100" max="300" value="300"><br><br>
+        <input type="range" name="contrast" id="contrast" min="-100" max="300" value="300"><br><br>
+        <button id="Salvar" onclick="downloadImagem()">Salvar Imagem</button><br><br>
+    </center>
+
+    <input type="file" name="Abrir" id="Abrir" onchange="abririmg()" style="display:none">
+
+
+</body>
+<script>
+
+    var boolinverter = false;
+
+    const Abrir2 = document.getElementById('Abrir2');
+    const Abrir = document.getElementById('Abrir');
+    const imagem = document.getElementById('imagem');
+    const inverter = document.getElementById('inverter');
+    const brightness = document.getElementById('brightness');
+    const contrast = document.getElementById('contrast');
+    const Salvar = document.getElementById('Salvar');
+
+    inverter.addEventListener('click', () => {
+        boolinverter = !boolinverter;
+    });
+
+    imagem.addEventListener('click', () => {
+        //clicar
+        Abrir.click();
+    });
+
+    inverter.style.display = 'none';
+            brightness.style.display = 'none';
+            contrast.style.display = 'none';
+            Salvar.style.display = 'none';
+
+    
+
+    function abririmg() {
+        if (Abrir.files && Abrir.files[0]) {
+            const r = new FileReader();
+            r.onload = function (e) {
+                imagem.src = e.target.result;
+                inverter.style.display = 'block';
+            brightness.style.display = 'block';
+            contrast.style.display = 'block';
+            Salvar.style.display = 'block';
+
+            setInterval(() => {
+
+
+if (imagem.src != "markdown.jpg") {
+    
+    if (boolinverter)
+        imagem.style.filter = `invert(1) grayscale(1) blur(0) brightness(${brightness.value + '%'}) contrast(${contrast.value + '%'}) `;
+    else
+        imagem.style.filter = `invert(0) grayscale(1) blur(0) brightness(${brightness.value + '%'}) contrast(${contrast.value + '%'}) `;
+}
+else
+{
+    
+}
+}, 1);
+
+            };
+            r.readAsDataURL(Abrir.files[0]);
+        }
+    }
+
+
+    function downloadImagem() {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = imagem.width * 10;
+        canvas.height = imagem.height * 10;
+
+        // Aplica os filtros ao contexto do canvas
+        ctx.filter = window.getComputedStyle(imagem).filter;
+        ctx.drawImage(imagem, 0, 0, canvas.width, canvas.height);
+
+        // Converte o canvas para um data URL e cria um link de download
+        const dataURL = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = dataURL;
+        link.download = 'imagem_filtrada.jpg';
+
+        // Simula um clique no link para iniciar o download
+        link.click();
+    }
+</script>
+
+</html>
